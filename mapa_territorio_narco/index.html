@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <title>Mapa Territorio y Narcotráfico</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+  <script src="./leaflet.groupedlayercontrol2.js"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <link rel="stylesheet" href="./css_tab.css">
+
+  <link rel="stylesheet" href="./bootstrap.css">
+
+  <script src="./output_shps/js/master_shp.js"></script>
+    <script src="./output_shps/js/poligonos_gmaps.js"></script>
+
+  <script src="./textos_pizarra/html/texto_metod.js"></script>
+  <script src="./iframe.js"></script>
+
+
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0px;
+      padding: 0px;
+      font-family: 'Lato', serif;
+    }
+
+    .wrapper {
+      padding-left: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 0.5fr 0.5fr;
+      grid-auto-rows: 100vh;
+      background-color: white;
+    }
+
+.leaflet-control-layers {
+  max-height: 75vh;
+  width: 17vw;
+  overflow: auto;
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.leaflet-control-layers-group-name {
+  margin-left: 5px;
+  font-size: 16px;
+  color: #317eac;
+}
+
+.leaflet-control-layers-group {
+  margin-bottom: 2em;
+    padding-left: 10px;
+}
+
+
+    .nested {
+      display: grid;
+      grid-template-rows: 1fr 6fr;
+      grid-auto-rows: 1fr 6fr;
+    }
+
+    #if {
+      width: 45vw;
+      height: 75vh;
+    }
+
+    #map-box {
+      background-color: white;
+    }
+
+    #map {
+      background-color: white;
+      margin-right: 1vw;
+      margin-bottom: 1vh;
+    }
+
+    #titulo {
+      margin-top: 8vh;
+      text-align: center;
+    }
+
+    #tooltip-id {
+      font-size: 12px;
+    }
+
+    #pizarra {
+      background-color: white;
+      margin-top: 6vh;
+      margin-bottom: 1vh;
+      text-align: justify;
+      margin-left: 2vw;
+      overflow-y: scroll;
+      padding-right: 1vw;
+    }
+
+    h1 {
+      text-align: right;
+    }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div id="pizarra">
+    </div>
+    <div id="map-box" class="nested">
+      <div id="titulo">Haz click en un elemento para ver más información.</div>
+      <div id="map"></div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    // función para añadir color y estética a los polígonos
+
+
+    // aplicar la función estética y añadir tooltips
+    //.addTo(map);
+
+    document.getElementById("pizarra").innerHTML = texto_metod;
+
+    function f_inicio() {
+      document.getElementById("pizarra").innerHTML = texto_metod;
+      document.getElementById("titulo").innerHTML = "Haz click en un elemento para revisar información sobre fondos concursables."
+    }
+/*
+
+    var tile_simple = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
+    });
+*/
+
+    var tile_mapbox = L.tileLayer('https://api.mapbox.com/styles/v1/arcruz0/cjj9byui343sq2rsu0gi0t5wn/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYXJjcnV6MCIsImEiOiJjamo5MmhwOWoyaHhpM2tvaGM4ZGFyYzNkIn0.e00BZ8NctCIv5GL5p-b_jw', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      minZoom: 13,
+      maxZoom: 17,
+      id: 'mapbox.streets',
+      accessToken: 'pk.eyJ1IjoiYndjYXN0aWxsbyIsImEiOiJjaXpxZ2s5ZTcwMWptMzJueWJ5dW03cWxwIn0.Sod29kk9UzEzM1ZGfRi1VQ'
+    })
+
+var l_poligonos_gmaps = L.layerGroup([L.geoJson(shp_poligonos_gmaps, {
+      style: function style(feature) {
+        return {
+          //fillColor: feature.properties.v_color,
+          weight: 3,
+          opacity: 1,
+          //fillColor: '#AADAFF',
+          fillColor: '#D9D9D9',
+          color: 'white',
+          fillOpacity: 1
+        };
+      }, opacity: "5"
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+
+    var l_Conflicto_alto = L.layerGroup([L.geoJson(shp_Conflicto_alto, {
+      style: function style(feature) {
+        return {
+          fillColor: "#930000",
+          weight: 3,
+          opacity: 1,
+          color: 'black',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+var l_Balaceras = L.layerGroup([L.geoJson(shp_Balaceras, {
+      pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: '#ff0000', fillOpacity: 0.8});
+},  opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Trafico = L.layerGroup([L.geoJson(shp_TraficoL, {
+      style: function style(feature) {
+        return {
+          fillColor: "yellow",
+          weight: 3,
+          opacity: 1,
+          color: 'grey',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)}), L.geoJson(shp_TraficoP, {
+      style: function style(feature) {
+        return {
+          fillColor: "yellow",
+          weight: 3,
+          opacity: 1,
+          color: 'yellow',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)}), L.geoJson(shp_Trafico, {
+      pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: 'yellow', fillOpacity: 0.8});
+}, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Prostitucion = L.layerGroup([L.geoJson(shp_Prostitucion, {
+      style: function style(feature) {
+        return {
+          fillColor: "#00ffed",
+          weight: 3,
+          opacity: 1,
+          color: 'black',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Falta_de_juegos = L.layerGroup([L.geoJson(shp_Falta_de_juegos, {
+            pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: 'grey', fillOpacity: 0.8});
+},  opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+        var l_Riesgo_robos = L.layerGroup([L.geoJson(shp_Riesgo_robos, {
+            pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: '#551a8b', fillOpacity: 0.8});
+}, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+        var l_Situacion_de_calle = L.layerGroup([L.geoJson(shp_Situacion_de_calle, {
+      style: function style(feature) {
+        return {
+          fillColor: "#00ffed",
+          weight: 3,
+          opacity: 1,
+          color: 'green',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_DrogadiccionP = L.layerGroup([L.geoJson(shp_DrogadiccionP, {
+      style: function style(feature) {
+        return {
+          fillColor: feature.properties.v_color,
+          weight: 3,
+          opacity: 1,
+          color: '#ffffa0',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)}),
+    L.geoJson(shp_Drogadiccion, {
+            pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: '#ffffa0', fillOpacity: 0.8});
+}, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})
+    ]);
+
+
+
+var l_Falta_iluminacion = L.layerGroup([L.geoJson(shp_Falta_iluminacion, {
+      color: 'grey',
+      opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)}), L.geoJson(shp_Falta_iluminacionL, {
+           pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: 'grey', fillOpacity: 0.8});
+},
+      opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+
+    var l_Camino_mal_estado = L.layerGroup([L.geoJson(shp_Camino_mal_estado, {
+      color: 'grey', opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Conflicto_medio = L.layerGroup([L.geoJson(shp_Conflicto_medio, {
+      style: function style(feature) {
+        return {
+          fillColor: "#ff0000",
+          weight: 3,
+          opacity: 1,
+          color: 'black',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+var l_Presencia_policial = L.layerGroup([L.geoJson(shp_Presencia_policial, {
+                 pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: '#006C2B', fillOpacity: 0.8});
+}, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Zona_insegura = L.layerGroup([L.geoJson(shp_Zona_inseguraL, {
+      style: function style(feature) {
+        return {
+          fillColor: feature.properties.v_color,
+          weight: 3,
+          opacity: 1,
+          color: '#551a8b',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)}), L.geoJson(shp_Camino_mal_estado, {
+      color: 'grey', opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var l_Zona_segura = L.layerGroup([L.geoJson(shp_Zona_segura, {
+      style: function style(feature) {
+        return {
+          fillColor: feature.properties.v_color,
+          weight: 3,
+          opacity: 1,
+          color: '#00B2FF',
+          dashArray: '4',
+          fillOpacity: 0.8
+        };
+      }, opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+    var basura_puntos = L.geoJson(shp_BasuraL, {
+            pointToLayer: function(geoJsonPoint, latlng) {
+    return L.circleMarker(latlng, {radius: 4, weight: 0, fillColor: 'grey', fillOpacity: 0.8});
+}, opacity: "1"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)});
+
+    var l_Basura = L.layerGroup(
+        [basura_puntos, L.geoJson(shp_Basura, {
+          color: 'grey', opacity: "5"
+          }).bindTooltip(function(layer) {
+          return layer.feature.properties.v_label;
+        }, {
+          permanent: false,
+          sticky: true,
+          opacity: 0.7
+        }).bindPopup(function(layer) {
+      return layer.feature.properties.v_popup;
+    }, {autoPan: true, autoPanPaddingBottomRight: new L.Point(320, 0)})]);
+
+        // crear mapa
+        var map = L.map('map', {
+          layers: [tile_mapbox, l_poligonos_gmaps, l_Camino_mal_estado, l_Falta_iluminacion, l_Basura, l_Falta_de_juegos, l_Conflicto_alto, l_Conflicto_medio, l_DrogadiccionP, l_Prostitucion, l_Situacion_de_calle, l_Trafico, l_Zona_insegura, l_Zona_segura, l_Presencia_policial, l_Riesgo_robos, l_Balaceras],
+          zoomControl: false,
+          zoomSnap: 0,
+          dragging: false,
+          doubleClickZoom: false,
+          scrollWheelZoom: false,
+          center: new L.LatLng( -33.573, -70.618 ),
+          zoom: 13.4
+        });
+
+map.on('popupclose', function(e) {
+    map.panTo(new L.LatLng( -33.573, -70.618 ))
+});
+
+
+
+        var groupedOverlays = {
+            "Conflicto armado": {
+            "&nbsp&nbsp<a style='color:#930000'>█<\/a>&nbspAlto": l_Conflicto_alto,
+            "&nbsp&nbsp<a style='color:#ff0000'>█<\/a>&nbspMedio": l_Conflicto_medio,
+            "&nbsp&nbsp<a style='color:#ff0000'>█<\/a>&nbspBalaceras": l_Balaceras
+          },
+          "Drogas": {
+            "&nbsp&nbsp<a style='color:#ffffa0'>█<\/a>&nbspDrogadicción": l_DrogadiccionP,
+            "&nbsp&nbsp<a style='color:yellow'>█<\/a>&nbspTráfico": l_Trafico
+          },
+          "Seguridad": {
+            "&nbsp&nbsp<a style='color:#006C2B'>█<\/a>&nbspPresencia policial": l_Presencia_policial,
+            "&nbsp&nbsp<a style='color:#00B2FF'>█<\/a>&nbspZona segura": l_Zona_segura,
+            "&nbsp&nbsp<a style='color:#551a8b'>█<\/a>&nbspZona insegura": l_Zona_insegura,
+            "&nbsp&nbsp<a style='color:#551a8b'>█<\/a>&nbspRiesgo de robos": l_Riesgo_robos
+          },
+            "<a style='color:#95BF5F'>█<\/a>&nbspDeficiencia de servicios públicos": {
+            "&nbsp&nbspFalta Iluminación": l_Falta_iluminacion,
+            "&nbsp&nbspFalta de juegos": l_Falta_de_juegos,
+            "&nbsp&nbspCamino en mal estado": l_Camino_mal_estado,
+            "&nbsp&nbspAcumulación de basura": l_Basura,
+          },
+          "<a style='color:#00ffed'>█<\/a>&nbspOtros": {
+            "&nbsp&nbspProstitución": l_Prostitucion,
+            "&nbsp&nbspSituación de calle": l_Situacion_de_calle
+          }
+        };
+
+        L.control.groupedLayers(null, groupedOverlays, {
+          collapsed: false, groupCheckboxes: true
+        }).addTo(map);
+  </script>
+
+  <script src="./js_tabs.js"></script>
+
+
+</body>
+
+</html>

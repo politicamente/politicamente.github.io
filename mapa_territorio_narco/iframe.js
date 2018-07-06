@@ -1,0 +1,1 @@
+var iframe_ms = `<iframe src="https://uccl0-my.sharepoint.com/personal/arcruz_uc_cl/_layouts/15/Doc.aspx?sourcedoc={cf0635b8-74aa-4602-9890-3ca8140aaec2}&action=embedview&wdAllowInteractivity=False&wdHideHeaders=True&wdInConfigurator=True" id="if"></iframe>`;

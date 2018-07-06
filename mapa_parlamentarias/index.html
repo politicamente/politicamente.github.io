@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <title>Mapa distritos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="./bootstrap.css">
+  <script src="./js_tabs.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <script src="./shp_distritos.js"></script>
+  <link rel="stylesheet" href="./css_tab.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0px;
+      padding: 0px;
+      background-color: white;
+      font-family: 'Lato', serif;
+    }
+
+    .wrapper {
+      padding-left: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: 100vh;
+    }
+
+    .nested {
+      display: grid;
+      grid-template-rows: 1fr 6fr;
+      grid-auto-rows: 1fr 6fr;
+    }
+
+    #map-box {
+      background-color: white;
+    }
+
+    #map {
+      background-color: white;
+    }
+
+    #titulo {
+      margin-top: 8vh;
+      text-align: center;
+    }
+
+    #tooltip-id {
+      font-size: 12px;
+    }
+
+    #pizarra {
+      background-color: white;
+      margin-top: 6vh;
+      margin-bottom: 6vh;
+      text-align: justify;
+      margin-right: 6vw;
+      overflow-y: scroll;
+      padding-right: 1vw;
+    }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div id="map-box" class="nested">
+      <div id="titulo">Haz click en un distrito para revisar nuestro análisis de la campaña.</div>
+      <div id="map"></div>
+    </div>
+    <div id="pizarra">
+    </div>
+  </div>
+  <script type="text/javascript">
+    // tiles vacíos
+    var e_tile = L.tileLayer('');
+
+    var texto = `      <h1>Metodología</h1>
+      <p>Para realizar el trabajo en terreno, los equipos fueron divididos en 3 grupos para recorrer los distritos 10, 11 y 13 de la Región Metropolitana y ver cómo los candidatos y candidatas a la Cámara Baja hacían campaña. Estos distritos fueron elegidos
+        ya que tienen un diverso componente socioeconómico entre sí, además de resultados electorales históricamente distintos. Estas diferencias permitieron cubrir un amplio espectro de acción por parte de los políticos, ya que hay comunas de altos,
+        medios y bajos ingresos, así como comunas con inclinación partidaria tanto de derecha/centro-derecha como de izquierda/centro-izquierda.</p>
+
+      <p>El trabajo de campo abarcó los meses de agosto, septiembre, octubre y noviembre de 2017 haciendo etnografías y observación participante. Esto permitió observar los distritos antes del período oficial de elecciones y durante el mismo. Además, se
+        realizó una observación en terreno el día de las elecciones parlamentarias (17 de noviembre de 2017), lo que se llevó a cabo en distintos centros electorales de las comunas estudiadas. Durante esta última jornada se buscó hablar con los votantes,
+        viendo sus motivaciones para asistir a votar y sus visiones de las campañas políticas. </p>
+
+      <p>El trabajo comenzó la segunda semana de agosto con una etnografía en las comunas de San Ramón (D13), Peñalolén (D11) y La Granja (D10) para constatar diferencias geográficas, demográficas y socioeconómicas entre los distritos. Esta etnografía comenzó
+        en el recinto municipal de cada comuna, seguido por un recorrido a las cuadras aledañas de cada uno. </p>
+
+      <p>Una vez que empezó el periodo de campaña oficial, comenzó el terreno para encontrar a los candidatos. Los equipos visitaron ferias, calles, parques y grandes eventos en busca de los candidatos o sus partidarios haciendo campaña. Este trabajo fue
+        realizado todos los fines de semana durante el periodo de campaña, lo que permitió ver quiénes estaban haciendo campaña en terreno y quiénes no. </p>
+
+      <p>Paralelo a este trabajo de campo, otro equipo comenzó a monitorear el trabajo de los candidatos en redes sociales, particularmente a través de sus cuentas de Twitter y Facebook. La idea de esto fue lograr ver quiénes eran más activos en la web,
+        de qué forma y con cuánta frecuencia, a la vez que comparar este comportamiento con el percibido durante el trabajo en terreno. </p>
+
+      <p>Debido a la gran cantidad de candidatos en competencia, se decidió seleccionar una muestra para seguirla de forma más directa. Esta selección contó con once candidatos, los que fueron elegidos procurando mantener un equilibrio de ideología, género,
+        edad y nivel de conocimiento. La selección no fue completamente exitosa, ya que muchos no respondieron a nuestra solicitud de seguirlos, pero finalmente se logró seguir a: Luciano Cruz-Coke, Maya Fernández, Giorgio Jackson y Luis Larraín en el
+        distrito 10; Fernando Atria, Cristóbal Acevedo, Tomás Hirsch y Francisco Undurraga en el distrito 11, y a; Iván Fuentes, Tucapel Jiménez y Guillermo Teillier en el distrito 13. </p>
+
+      <p>A todos estos candidatos se les realizó una entrevista preliminar en la que se les preguntó cuatro cosas: (1) Cuáles son sus intereses y motivaciones para presentarse a diputado o diputada en su distrito, (2) Cómo la nueva reforma electoral modifica
+        su forma de hacer campaña, (3) Qué necesidades específicas ve en su distrito y la comuna que lo componen, y de qué forma hace campaña en cada comuna, y (4) Cuál es su percepción de la campaña de sus oponentes, ya sea dentro o fuera de la lista.
+      </p>
+
+      <p>Además de esta entrevista, se pudo acompañar a los once candidatos en sus eventos de campaña más importantes, como cierres de campaña, conciertos y actividades junto a compañeros de lista. También a actividades más pequeñas y cotidianas, como puerta
+        a puerta, conversaciones en la feria y visitas a sus locales de campaña. En conjunto, esto permitió tener una visión más completa de las campañas de cada uno de los candidatos, viendo su lado más real y habitual, y no solo lo que se ve en la prensa.
+      </p>
+
+      <p> Finalizado el periodo de campaña, se pudo recabar un volumen muy grande de información y material físico (pancartas, afiches, fotografía) de las salidas a terreno. Esto fue contrastado con lo hallado en el seguimiento por redes sociales para buscar
+        patrones, similitudes, diferencias y particularidades de cada campaña. </p>`
+
+    document.getElementById("pizarra").innerHTML = texto
+
+    // crear mapa
+    var map = L.map('map', {
+      layers: [e_tile],
+      zoomControl: false,
+      zoomSnap: 0,
+      dragging: false,
+      doubleClickZoom: false,
+      scrollWheelZoom: false,
+      center: new L.LatLng(-33.346590, -70.471802),
+      zoom: 10.2,
+      attributionControl: false
+    });
+
+    // función para añadir color y estética a los polígonos
+    function style(feature) {
+      return {
+        fillColor: feature.properties.v_color,
+        weight: 3,
+        opacity: 1,
+        color: 'grey',
+        dashArray: '4',
+        fillOpacity: 0.7
+      };
+    }
+
+    function f_inicio() {
+      document.getElementById("pizarra").innerHTML = texto;
+      document.getElementById("titulo").innerHTML = "Haz click en un distrito para revisar nuestro análisis de la campaña."
+    }
+
+
+    // aplicar la función estética y añadir tooltips
+    L.geoJson(shp_distritos, {
+      style: style,
+      onEachFeature: function infodiv(feature, layer) {
+        if (feature.properties && feature.properties)
+          layer.on('click', function(e) {
+            document.getElementById("pizarra").innerHTML = layer.feature.properties.v_desc;
+            document.getElementById("titulo").innerHTML = "Haz click en un distrito para revisar nuestro análisis de la campaña. <br> <a href='javascript:f_inicio();'>O aquí para volver al inicio.</a>";
+            document.getElementById("defaultOpen" + layer.feature.properties.distrito_dip).click();
+          })
+      },
+      opacity: "5"
+    }).bindTooltip(function(layer) {
+      return layer.feature.properties.v_label;
+    }, {
+      permanent: false,
+      sticky: true,
+      opacity: 0.7
+    }).addTo(map);
+  </script>
+</body>
+
+</html>
