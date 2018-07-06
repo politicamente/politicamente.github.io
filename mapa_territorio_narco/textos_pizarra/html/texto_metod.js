@@ -27,5 +27,6 @@ var texto_metod= `<div class="tab">
 
 
 <div id="tab2" class="tabcontent">
+<p>El objetivo de esta investigación fue identificar como se expresa el narcotráfico en los territorios, desde las subjetividades de la comunidad. A parte del insumo que representa el mapa expuesto, se hizo una recopilación de fondos concursables que pueden ser utilizados por las organizaciones sociales con las que se trabajó para mejorar algunas de las problemáticas identificadas. Se reconoce, sin embargo, que las complejas condiciones a las que están expuestos los miembros de la comunidad no podrán ser resueltas solamente con estas iniciativas y que se requiere de nuevas estrategias multidimensionales que mejoren los niveles de inseguridad y tráfico de drogas.</p><br>
 <iframe src="https://gs-scroller.appspot.com/1OXI-BKvqA2tdVErngu-mrP4RBzSdDMgi2rkDkobHoF8/0" id="if"></iframe>
 </div>`;
