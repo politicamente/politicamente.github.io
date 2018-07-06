@@ -27,4 +27,5 @@ var texto_metod= `<div class="tab">
 
 
 <div id="tab2" class="tabcontent">
+<iframe src="https://gs-scroller.appspot.com/1OXI-BKvqA2tdVErngu-mrP4RBzSdDMgi2rkDkobHoF8/0" id="if"></iframe>
 </div>`;
