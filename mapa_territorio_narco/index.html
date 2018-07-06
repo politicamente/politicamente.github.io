@@ -517,15 +517,15 @@ var l_Presencia_policial = L.layerGroup([L.geoJson(shp_Presencia_policial, {
           layers: [tile_mapbox, l_poligonos_gmaps, l_Camino_mal_estado, l_Falta_iluminacion, l_Basura, l_Falta_de_juegos, l_Conflicto_alto, l_Conflicto_medio, l_DrogadiccionP, l_Prostitucion, l_Situacion_de_calle, l_Trafico, l_Zona_insegura, l_Zona_segura, l_Presencia_policial, l_Riesgo_robos, l_Balaceras],
           zoomControl: false,
           zoomSnap: 0,
-          dragging: false,
+          dragging: true,
           doubleClickZoom: false,
           scrollWheelZoom: false,
-          center: new L.LatLng( -33.57, -70.6195 ),
+          center: new L.LatLng( -33.573, -70.6195 ),
           zoom: 13.4
         });
 
 map.on('popupclose', function(e) {
-    map.panTo(new L.LatLng( -33.57, -70.6195 ))
+    map.panTo(new L.LatLng( -33.573, -70.6195 ))
 });
 
 
