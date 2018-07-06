@@ -4,9 +4,6 @@ var texto_metod= `<div class="tab">
 </div>
 
 	<p><div id="tab1" class="tabcontent"></p>
-
-	<h1>Metodología</h1>
-
 	<p>Generalmente se considera que Chile tiene buenos niveles de vida, e incluso de alta transparencia y poca corrupción, posicionándose como segundo lugar en Latinoamérica (Transparencia Internacional, 2016). Su capital, Santiago, también ha sido alabada por índices internacionales, y se ha estimado con un Índice de Desarrollo Humano (<span class="caps">IDH</span>) “muy alto”, algo poco común para la región, dado que sólo dos ciudades han logrado esta categoría. Asimismo, The Economist el 2017 elaboró un artículo donde posiciona a Santiago como la segunda mejor ciudad para vivir en Latinoamérica. ¿Pero qué tan cierto es esto? ¿Los índices han logrado captar la realidad que viven las más de 7 millones que viven en la región metropolitana (RM)?</p>
 
 	<p>Algo es cierto: las personas de la Región Metropolitana viven distintas realidades. Esta diferencia en calidad de vida es abismante, personas viviendo en una misma región pueden tener hasta 7-8 años menos de vida que otros, simplemente por tener oportunidades de desarrollo diferentes. Intentos por evidenciar estas diferencias, desigualdades y segregación en la RM han sido algunos, dentro de los que destacan: Zonas Ocupadas, Ciper 2012; Barrios Críticos, Fiscalía 2016.</p>
